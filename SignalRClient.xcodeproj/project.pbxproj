@@ -26,6 +26,7 @@
 		5ACE4BE1238274B500F665B6 /* ReconnectPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ACE4BDF238273DA00F665B6 /* ReconnectPolicyTests.swift */; };
 		5AFBA01C238A4C2800A9B5C7 /* ReconnectableConnectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AFBA01B238A4C2800A9B5C7 /* ReconnectableConnectionTests.swift */; };
 		5AFBA01E238A554B00A9B5C7 /* Fakes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AFBA01D238A554B00A9B5C7 /* Fakes.swift */; };
+		620ABFBC245E3A730091005F /* SwiftWebSocketsTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 620ABFBB245E3A730091005F /* SwiftWebSocketsTransport.swift */; };
 		OBJ_109 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_39 /* Constants.swift */; };
 		OBJ_110 /* HandshakeProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_40 /* HandshakeProtocolTests.swift */; };
 		OBJ_111 /* HttpConnectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_41 /* HttpConnectionTests.swift */; };
@@ -95,6 +96,7 @@
 		5ACE4BDF238273DA00F665B6 /* ReconnectPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectPolicyTests.swift; sourceTree = "<group>"; };
 		5AFBA01B238A4C2800A9B5C7 /* ReconnectableConnectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectableConnectionTests.swift; sourceTree = "<group>"; };
 		5AFBA01D238A554B00A9B5C7 /* Fakes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fakes.swift; sourceTree = "<group>"; };
+		620ABFBB245E3A730091005F /* SwiftWebSocketsTransport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftWebSocketsTransport.swift; sourceTree = "<group>"; };
 		OBJ_10 /* Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
 		OBJ_11 /* ConnectionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionDelegate.swift; sourceTree = "<group>"; };
 		OBJ_12 /* DefaultHttpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultHttpClient.swift; sourceTree = "<group>"; };
@@ -260,6 +262,7 @@
 				OBJ_27 /* ServerInvocationHandler.swift */,
 				OBJ_28 /* SignalRError.swift */,
 				OBJ_29 /* StreamHandle.swift */,
+				620ABFBB245E3A730091005F /* SwiftWebSocketsTransport.swift */,
 				OBJ_30 /* TransferFormat.swift */,
 				OBJ_31 /* Transport.swift */,
 				OBJ_32 /* TransportDelegate.swift */,
@@ -390,6 +393,7 @@
 				OBJ_69 /* HandshakeProtocol.swift in Sources */,
 				OBJ_70 /* HttpClientProtocol.swift in Sources */,
 				OBJ_71 /* HttpConnection.swift in Sources */,
+				620ABFBC245E3A730091005F /* SwiftWebSocketsTransport.swift in Sources */,
 				OBJ_72 /* HttpConnectionOptions.swift in Sources */,
 				OBJ_73 /* HttpResponse.swift in Sources */,
 				5ACE4BD82382688200F665B6 /* ReconnectableConnection.swift in Sources */,

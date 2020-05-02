@@ -176,7 +176,7 @@ public class HttpConnection: Connection {
         }
     }
 
-    public func send(data: Data, sendDidComplete: (_ error: Error?) -> Void) {
+    public func send(data: Data, sendDidComplete: @escaping (_ error: Error?) -> Void) {
         logger.log(logLevel: .debug, message: "Sending data")
         if state != .connected {
             logger.log(logLevel: .error, message: "Sending data failed - connection not in the 'connected' state")

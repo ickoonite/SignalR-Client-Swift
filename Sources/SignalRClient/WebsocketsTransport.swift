@@ -81,7 +81,7 @@ public class WebsocketsTransport: Transport {
         webSocket!.open()
     }
 
-    public func send(data: Data, sendDidComplete: (_ error: Error?) -> Void) {
+    public func send(data: Data, sendDidComplete: @escaping (_ error: Error?) -> Void) {
         webSocket?.send(data: data)
         sendDidComplete(nil)
     }
