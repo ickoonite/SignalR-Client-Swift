@@ -259,6 +259,8 @@
 				OBJ_24 /* JSONHubProtocol.swift */,
 				OBJ_25 /* Logger.swift */,
 				OBJ_26 /* NegotiationResponse.swift */,
+				5ACE4BD72382688200F665B6 /* ReconnectableConnection.swift */,
+				5ACE4BD92382701000F665B6 /* ReconnectPolicy.swift */,
 				OBJ_27 /* ServerInvocationHandler.swift */,
 				OBJ_28 /* SignalRError.swift */,
 				OBJ_29 /* StreamHandle.swift */,
@@ -270,8 +272,6 @@
 				OBJ_34 /* Util.swift */,
 				OBJ_35 /* WebSocket.swift */,
 				OBJ_36 /* WebsocketsTransport.swift */,
-				5ACE4BD72382688200F665B6 /* ReconnectableConnection.swift */,
-				5ACE4BD92382701000F665B6 /* ReconnectPolicy.swift */,
 			);
 			name = SignalRClient;
 			path = Sources/SignalRClient;

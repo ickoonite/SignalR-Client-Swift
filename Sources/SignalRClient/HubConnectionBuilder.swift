@@ -26,6 +26,7 @@ public class HubConnectionBuilder {
     private var delegate: HubConnectionDelegate?
     private var reconnectPolicy: ReconnectPolicy = NoReconnectPolicy()
     private var useLegacyHttpConnection = false
+    private var eventDispatchQueue: DispatchQueue?
 
     /**
      Initializes a `HubConnectionBuilder` with a URL.
@@ -121,6 +122,11 @@ public class HubConnectionBuilder {
         useLegacyHttpConnection = true
         return self
     }
+    
+    public func withEventDispatchQueue(dispatchQueue: DispatchQueue) -> HubConnectionBuilder {
+        self.eventDispatchQueue = dispatchQueue
+        return self
+    }
 
     /**
      Creates a new `HubConnection` using requested configuration.
@@ -128,7 +134,7 @@ public class HubConnectionBuilder {
      - returns: a new `HubConnection` configured as requested
      */
     public func build() -> HubConnection {
-        let hubConnection = HubConnection(connection: createHttpConnection(), hubProtocol: hubProtocolFactory(logger), logger: logger)
+        let hubConnection = HubConnection(connection: createHttpConnection(), hubProtocol: hubProtocolFactory(logger), logger: logger, eventDispatchQueue: eventDispatchQueue)
         hubConnection.delegate = delegate
         return hubConnection
     }
@@ -138,7 +144,7 @@ public class HubConnectionBuilder {
             if !(reconnectPolicy is NoReconnectPolicy) {
                 logger.log(logLevel: .error, message: "Using reconnect with legacy HttpConnection is not supported. Ignoring reconnect settings.")
             }
-            return HttpConnection(url: url, options: httpConnectionOptions, logger: logger)
+            return HttpConnection(url: url, options: httpConnectionOptions, logger: logger, eventDispatchQueue: eventDispatchQueue)
         }
 
         let connectionFactory = {return HttpConnection(url: self.url, options: self.httpConnectionOptions, logger: self.logger)}

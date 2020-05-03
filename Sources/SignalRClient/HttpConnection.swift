@@ -11,6 +11,8 @@ import Foundation
 public class HttpConnection: Connection {
     private let connectionQueue: DispatchQueue
     private let startDispatchGroup: DispatchGroup
+    
+    private let eventDispatchQueue: DispatchQueue
 
     private var url: URL
     private let options: HttpConnectionOptions
@@ -33,13 +35,14 @@ public class HttpConnection: Connection {
         case stopped = "stopped"
     }
 
-    public convenience init(url: URL, options: HttpConnectionOptions = HttpConnectionOptions(), logger: Logger = NullLogger()) {
-        self.init(url: url, options: options, transportFactory: DefaultTransportFactory(logger: logger), logger: logger)
+    public convenience init(url: URL, options: HttpConnectionOptions = HttpConnectionOptions(), logger: Logger = NullLogger(), eventDispatchQueue: DispatchQueue? = nil) {
+        self.init(url: url, options: options, transportFactory: DefaultTransportFactory(logger: logger), logger: logger, eventDispatchQueue: eventDispatchQueue)
     }
 
-    init(url: URL, options: HttpConnectionOptions, transportFactory: TransportFactory, logger: Logger) {
+    init(url: URL, options: HttpConnectionOptions, transportFactory: TransportFactory, logger: Logger, eventDispatchQueue: DispatchQueue? = nil) {
         logger.log(logLevel: .debug, message: "HttpConnection init")
         connectionQueue = DispatchQueue(label: "SignalR.connection.queue")
+        self.eventDispatchQueue = eventDispatchQueue ?? DispatchQueue.main // preserve current behaviour by default
         startDispatchGroup = DispatchGroup()
 
         self.url = url
@@ -171,7 +174,7 @@ public class HttpConnection: Connection {
         }
 
         logger.log(logLevel: .debug, message: "Invoking connectionDidFailToOpen")
-        Util.dispatchToMainThread {
+        eventDispatchQueue.async {
             self.delegate?.connectionDidFailToOpen(error: error)
         }
     }
@@ -210,7 +213,7 @@ public class HttpConnection: Connection {
         } else {
             logger.log(logLevel: .debug, message: "Connection being stopped before transport initialized")
             logger.log(logLevel: .debug, message: "Invoking connectionDidClose (\(#function): \(#line))")
-            Util.dispatchToMainThread {
+            eventDispatchQueue.async {
                 self.delegate?.connectionDidClose(error: stopError)
             }
         }
@@ -226,7 +229,7 @@ public class HttpConnection: Connection {
         if  previousState != nil {
             logger.log(logLevel: .debug, message: "Invoking connectionDidOpen")
             self.connectionId = connectionId
-            Util.dispatchToMainThread {
+            eventDispatchQueue.async {
                 self.delegate?.connectionDidOpen(connection: self)
             }
         } else {
@@ -236,7 +239,7 @@ public class HttpConnection: Connection {
 
     fileprivate func transportDidReceiveData(_ data: Data) {
         logger.log(logLevel: .debug, message: "Received data from transport")
-        Util.dispatchToMainThread {
+        eventDispatchQueue.async {
             self.delegate?.connectionDidReceiveData(connection: self, data: data)
         }
     }
@@ -253,7 +256,7 @@ public class HttpConnection: Connection {
             startDispatchGroup.leave()
 
             logger.log(logLevel: .debug, message: "Invoking connectionDidFailToOpen")
-            Util.dispatchToMainThread {
+            eventDispatchQueue.async {
                 self.delegate?.connectionDidFailToOpen(error: self.stopError ?? error!)
             }
         } else {
@@ -261,7 +264,7 @@ public class HttpConnection: Connection {
 
             self.connectionId = nil
 
-            Util.dispatchToMainThread {
+            eventDispatchQueue.async {
                 self.delegate?.connectionDidClose(error: self.stopError ?? error)
             }
         }

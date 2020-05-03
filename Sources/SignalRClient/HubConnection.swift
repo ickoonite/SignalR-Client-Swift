@@ -17,6 +17,9 @@ public class HubConnection {
 
     private var invocationId: Int = 0
     private let hubConnectionQueue: DispatchQueue
+    
+    private let eventDispatchQueue: DispatchQueue
+    
     private var pendingCalls = [String: ServerInvocationHandler]()
     private var callbacks = [String: (ArgumentExtractor) throws -> Void]()
     private var handshakeStatus: HandshakeStatus = .needsHandling(false)
@@ -47,12 +50,13 @@ public class HubConnection {
      - parameter hubProtocol: `HubProtocol` to use to communicate with the server
      - parameter logger: optional logger to write logs. If not provided no log will be written
      */
-    public init(connection: Connection, hubProtocol: HubProtocol, logger: Logger = NullLogger()) {
+    public init(connection: Connection, hubProtocol: HubProtocol, logger: Logger = NullLogger(), eventDispatchQueue: DispatchQueue? = nil) {
         logger.log(logLevel: .debug, message: "HubConnection init")
         self.connection = connection
         self.hubProtocol = hubProtocol
         self.logger = logger
         self.hubConnectionQueue = DispatchQueue(label: "SignalR.hubconnection.queue")
+        self.eventDispatchQueue = eventDispatchQueue ?? DispatchQueue.main // preserve current behaviour by default
     }
 
     deinit {
@@ -287,7 +291,7 @@ public class HubConnection {
             _ = pendingCalls.removeValue(forKey: invocationId)
         }
 
-        Util.dispatchToMainThread {
+        eventDispatchQueue.async {
             invocationHandler.raiseError(error: error)
         }
     }
@@ -354,7 +358,7 @@ public class HubConnection {
         }
 
         if serverInvocationHandler != nil {
-            Util.dispatchToMainThread {
+            eventDispatchQueue.async {
                 serverInvocationHandler!.processCompletion(completionMessage: message)
             }
         } else {
@@ -369,7 +373,7 @@ public class HubConnection {
         }
 
         if serverInvocationHandler != nil {
-            Util.dispatchToMainThread {
+            eventDispatchQueue.async {
                 if let error = serverInvocationHandler!.processStreamItem(streamItemMessage: message) {
                     self.logger.log(logLevel: .error, message: "Processing stream item failed: \(error)")
                     self.failInvocationWithError(invocationHandler: serverInvocationHandler!, invocationId: message.invocationId, error: error)
@@ -388,7 +392,7 @@ public class HubConnection {
         }
 
         if callback != nil {
-            Util.dispatchToMainThread {
+            eventDispatchQueue.async {
                 do {
                     try callback!(ArgumentExtractor(clientInvocationMessage: message))
                 } catch {
@@ -412,7 +416,7 @@ public class HubConnection {
         logger.log(logLevel: .info, message: "Terminating \(invocationHandlers.count) pending hub methods")
         let invocationError = error ?? SignalRError.hubInvocationCancelled
         for serverInvocationHandler in invocationHandlers {
-            Util.dispatchToMainThread {
+            eventDispatchQueue.async {
                 serverInvocationHandler.raiseError(error: invocationError)
             }
         }

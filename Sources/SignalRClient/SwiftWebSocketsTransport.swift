@@ -36,7 +36,7 @@ class SwiftWebSocketsTransport : NSObject, Transport, URLSessionWebSocketDelegat
                 }
                                 
             case let .failure(e):
-                self?.delegate?.transportDidClose(e)
+                self?.delegate?.transportDidClose(SwiftWebSocketsTransportError.receive(underlying: e))
             }
             
             // for some unknown reason, if we want to keep receiving messages
@@ -55,6 +55,9 @@ class SwiftWebSocketsTransport : NSObject, Transport, URLSessionWebSocketDelegat
     }
     
     func send(data: Data, sendDidComplete: @escaping (_ error: Error?) -> Void) {
+        if task.state == .canceling || task.state == .completed {
+            sendDidComplete(SwiftWebSocketsTransportError.closed)
+        }
         let message = URLSessionWebSocketTask.Message.data(data)
         task.send(message) { error in
             sendDidComplete(error)
@@ -77,4 +80,9 @@ class SwiftWebSocketsTransport : NSObject, Transport, URLSessionWebSocketDelegat
 
         return url
     }
+}
+
+enum SwiftWebSocketsTransportError : Error {
+    case closed
+    case receive(underlying: Error)
 }
