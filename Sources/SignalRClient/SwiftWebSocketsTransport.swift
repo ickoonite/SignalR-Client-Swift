@@ -24,25 +24,28 @@ class SwiftWebSocketsTransport : NSObject, Transport, URLSessionWebSocketDelegat
     
     func didReceiveMessage() {
         task.receive { [weak self] received in
+            guard let self = self else {
+                return
+            }
             switch received {
             case let .success(msg):
                 switch msg {
                 case let .data(data):
-                    self?.delegate?.transportDidReceiveData(data)
+                    self.delegate?.transportDidReceiveData(data)
                 case let .string(string):
-                    self?.delegate?.transportDidReceiveData(string.data(using: .utf8)!)
+                    self.delegate?.transportDidReceiveData(string.data(using: .utf8)!)
                 @unknown default:
                     fatalError()
                 }
-                                
             case let .failure(e):
-                self?.delegate?.transportDidClose(SwiftWebSocketsTransportError.receive(underlying: e))
+                self.delegate?.transportDidClose(SwiftWebSocketsTransportError.receive(underlying: e))
+                return
             }
             
             // for some unknown reason, if we want to keep receiving messages
             // we have to keep hooking up the callback, so...
             // https://appspector.com/blog/websockets-in-ios-using-urlsessionwebsockettask
-            self?.didReceiveMessage()
+            self.didReceiveMessage()
         }
     }
     
